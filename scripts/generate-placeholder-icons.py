@@ -9,8 +9,8 @@ import os
 
 def create_icon(size, output_path):
     """Create a simple placeholder icon"""
-    # Create image with gradient background
-    img = Image.new('RGB', (size, size), color='#667eea')
+    # Create image with gradient background (RGBA format for transparency support)
+    img = Image.new('RGBA', (size, size), color='#667eea')
     draw = ImageDraw.Draw(img)
 
     # Draw a simple clipboard icon shape

@@ -100,8 +100,12 @@ jobs:
           cd packages/desktop/src-tauri
           cargo fmt --check
 
+      - name: Build Rust code
+        run: |
+          cd packages/desktop/src-tauri
+          cargo build
+
       - name: Check Rust code with clippy
-        continue-on-error: true
         run: |
           cd packages/desktop/src-tauri
           cargo clippy -- -D warnings
