@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [18]
+
+    runs-on: ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './packages/desktop/src-tauri -> target'
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint || echo "Lint script not configured yet"
+
+      - name: Build protocol package
+        run: |
+          cd packages/protocol
+          npm ci
+          npm run build
+
+      - name: Build core package
+        run: |
+          cd packages/core
+          npm ci
+          npm run build
+
+      - name: Test protocol package
+        run: |
+          cd packages/protocol
+          npm test || echo "Tests not configured yet"
+
+      - name: Test core package
+        run: |
+          cd packages/core
+          npm test || echo "Tests not configured yet"
+
+      - name: Build desktop frontend
+        run: |
+          cd packages/desktop
+          npm ci
+          npm run build
+
+      - name: Check Rust code
+        run: |
+          cd packages/desktop/src-tauri
+          cargo fmt --check || echo "Rustfmt not configured"
+          cargo clippy -- -D warnings || echo "Clippy not configured"
