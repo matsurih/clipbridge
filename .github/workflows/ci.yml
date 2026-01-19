@@ -60,7 +60,8 @@ jobs:
         run: pnpm install
 
       - name: Lint
-        run: pnpm run lint || echo "Lint script not configured yet"
+        continue-on-error: true
+        run: pnpm run lint
 
       - name: Build protocol package
         run: |
@@ -75,14 +76,16 @@ jobs:
           pnpm run build
 
       - name: Test protocol package
+        continue-on-error: true
         run: |
           cd packages/protocol
-          pnpm test || echo "Tests not configured yet"
+          pnpm test
 
       - name: Test core package
+        continue-on-error: true
         run: |
           cd packages/core
-          pnpm test || echo "Tests not configured yet"
+          pnpm test
 
       - name: Build desktop frontend
         run: |
@@ -90,8 +93,14 @@ jobs:
           pnpm install
           pnpm run build
 
-      - name: Check Rust code
+      - name: Check Rust code format
+        continue-on-error: true
         run: |
           cd packages/desktop/src-tauri
-          cargo fmt --check || echo "Rustfmt not configured"
-          cargo clippy -- -D warnings || echo "Clippy not configured"
+          cargo fmt --check
+
+      - name: Check Rust code with clippy
+        continue-on-error: true
+        run: |
+          cd packages/desktop/src-tauri
+          cargo clippy -- -D warnings
