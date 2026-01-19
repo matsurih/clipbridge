@@ -28,6 +28,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -52,38 +57,38 @@ jobs:
             librsvg2-dev
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Lint
-        run: npm run lint || echo "Lint script not configured yet"
+        run: pnpm run lint || echo "Lint script not configured yet"
 
       - name: Build protocol package
         run: |
           cd packages/protocol
-          npm install
-          npm run build
+          pnpm install
+          pnpm run build
 
       - name: Build core package
         run: |
           cd packages/core
-          npm install
-          npm run build
+          pnpm install
+          pnpm run build
 
       - name: Test protocol package
         run: |
           cd packages/protocol
-          npm test || echo "Tests not configured yet"
+          pnpm test || echo "Tests not configured yet"
 
       - name: Test core package
         run: |
           cd packages/core
-          npm test || echo "Tests not configured yet"
+          pnpm test || echo "Tests not configured yet"
 
       - name: Build desktop frontend
         run: |
           cd packages/desktop
-          npm install
-          npm run build
+          pnpm install
+          pnpm run build
 
       - name: Check Rust code
         run: |

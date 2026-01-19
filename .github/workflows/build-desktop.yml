@@ -36,6 +36,11 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -60,13 +65,13 @@ jobs:
             librsvg2-dev
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Build desktop app
         run: |
           cd packages/desktop
-          npm install
-          npm run tauri:build
+          pnpm install
+          pnpm run tauri:build
 
       - name: List build artifacts (Debug)
         run: |
