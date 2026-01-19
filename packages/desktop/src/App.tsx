@@ -10,7 +10,7 @@ interface ClipboardItem {
 
 function App() {
   const [isSyncing, setIsSyncing] = useState(false);
-  const [clipboardHistory, setClipboardHistory] = useState<ClipboardItem[]>([]);
+  const [clipboardHistory] = useState<ClipboardItem[]>([]);
   const [currentClipboard, setCurrentClipboard] = useState('');
 
   useEffect(() => {
