@@ -8,20 +8,12 @@ repository = "https://github.com/yourusername/clipbridge"
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "1.5", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "1.5", features = [
-  "clipboard-all",
-  "system-tray",
-  "notification-all",
-  "shell-open",
-  "window-close",
-  "window-hide",
-  "window-maximize",
-  "window-minimize",
-  "window-show",
-  "window-unmaximize"
+tauri = { version = "2", features = [
+  "tray-icon",
+  "image-png"
 ] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
