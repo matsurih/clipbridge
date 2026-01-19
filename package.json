@@ -12,7 +12,10 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "check": "./scripts/check-ci.sh",
+    "check:quick": "./scripts/quick-check.sh",
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
