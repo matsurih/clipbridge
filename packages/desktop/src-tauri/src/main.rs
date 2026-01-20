@@ -7,9 +7,6 @@ mod network;
 use clipboard::ClipboardMonitor;
 use std::sync::Arc;
 use parking_lot::Mutex;
-use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
-};
 
 #[derive(Clone, serde::Serialize)]
 struct ClipboardUpdate {
@@ -67,21 +64,6 @@ async fn is_syncing(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     Ok(*state.is_syncing.lock())
 }
 
-fn create_system_tray() -> SystemTray {
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let show = CustomMenuItem::new("show".to_string(), "Show");
-    let sync = CustomMenuItem::new("sync".to_string(), "Start Sync");
-
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(show)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(sync)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
-
-    SystemTray::new().with_menu(tray_menu)
-}
-
 fn main() {
     env_logger::init();
 
@@ -92,38 +74,6 @@ fn main() {
 
     tauri::Builder::default()
         .manage(app_state)
-        .system_tray(create_system_tray())
-        .on_system_tray_event(|app, event| match event {
-            SystemTrayEvent::LeftClick {
-                position: _,
-                size: _,
-                ..
-            } => {
-                let window = app.get_window("main").unwrap();
-                if window.is_visible().unwrap() {
-                    window.hide().unwrap();
-                } else {
-                    window.show().unwrap();
-                    window.set_focus().unwrap();
-                }
-            }
-            SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-                "quit" => {
-                    std::process::exit(0);
-                }
-                "show" => {
-                    let window = app.get_window("main").unwrap();
-                    window.show().unwrap();
-                    window.set_focus().unwrap();
-                }
-                "sync" => {
-                    // Toggle sync
-                    log::info!("Sync menu item clicked");
-                }
-                _ => {}
-            },
-            _ => {}
-        })
         .invoke_handler(tauri::generate_handler![
             start_sync,
             stop_sync,
