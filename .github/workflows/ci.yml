@@ -94,7 +94,6 @@ jobs:
           pnpm run build
 
       - name: Check Rust code format
-        continue-on-error: true
         run: |
           cd packages/desktop/src-tauri
           cargo fmt --check
