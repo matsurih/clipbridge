@@ -18,7 +18,7 @@ jobs:
           - platform: ubuntu-latest
             name: Linux
             ext: deb
-            artifact: clipbridge_*_amd64.deb
+            artifact: ClipBridge_*_amd64.deb
           - platform: windows-latest
             name: Windows
             ext: msi
