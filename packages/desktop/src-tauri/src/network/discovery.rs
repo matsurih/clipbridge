@@ -4,10 +4,14 @@ use parking_lot::Mutex;
 use std::thread;
 use std::time::Duration;
 
+#[allow(dead_code)]
 const DISCOVERY_PORT: u16 = 7878;
+#[allow(dead_code)]
 const DISCOVERY_MULTICAST_ADDR: &str = "239.255.77.77";
+#[allow(dead_code)]
 const DISCOVERY_MESSAGE: &str = "CLIPBRIDGE_DISCOVERY";
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct DiscoveredDevice {
     pub device_id: String,
@@ -15,6 +19,7 @@ pub struct DiscoveredDevice {
     pub last_seen: u64,
 }
 
+#[allow(dead_code)]
 pub struct DeviceDiscovery {
     device_id: String,
     discovered_devices: Arc<Mutex<Vec<DiscoveredDevice>>>,
@@ -22,6 +27,7 @@ pub struct DeviceDiscovery {
 }
 
 impl DeviceDiscovery {
+    #[allow(dead_code)]
     pub fn new(device_id: String) -> Self {
         Self {
             device_id,
@@ -31,6 +37,7 @@ impl DeviceDiscovery {
     }
 
     /// Start broadcasting and listening for devices
+    #[allow(dead_code)]
     pub fn start(&self) -> std::io::Result<()> {
         let mut is_running = self.is_running.lock();
         if *is_running {
@@ -58,16 +65,19 @@ impl DeviceDiscovery {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn stop(&self) {
         let mut is_running = self.is_running.lock();
         *is_running = false;
         log::info!("Device discovery stopped");
     }
 
+    #[allow(dead_code)]
     pub fn get_discovered_devices(&self) -> Vec<DiscoveredDevice> {
         self.discovered_devices.lock().clone()
     }
 
+    #[allow(dead_code)]
     fn broadcast_presence(device_id: &str, is_running: &Arc<Mutex<bool>>) {
         let socket = match UdpSocket::bind("0.0.0.0:0") {
             Ok(s) => s,
@@ -96,6 +106,7 @@ impl DeviceDiscovery {
         }
     }
 
+    #[allow(dead_code)]
     fn listen_for_devices(
         own_device_id: &str,
         discovered_devices: &Arc<Mutex<Vec<DiscoveredDevice>>>,

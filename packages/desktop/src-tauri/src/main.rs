@@ -8,6 +8,7 @@ use clipboard::ClipboardMonitor;
 use std::sync::Arc;
 use parking_lot::Mutex;
 
+#[allow(dead_code)]
 #[derive(Clone, serde::Serialize)]
 struct ClipboardUpdate {
     content: String,
@@ -15,6 +16,7 @@ struct ClipboardUpdate {
 }
 
 struct AppState {
+    #[allow(dead_code)]
     clipboard_monitor: Arc<Mutex<Option<ClipboardMonitor>>>,
     is_syncing: Arc<Mutex<bool>>,
 }

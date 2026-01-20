@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MessageType {
     ClipboardUpdate,
@@ -10,6 +11,7 @@ pub enum MessageType {
     Pong,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkMessage {
     pub msg_type: MessageType,
@@ -21,6 +23,7 @@ pub struct NetworkMessage {
 }
 
 impl NetworkMessage {
+    #[allow(dead_code)]
     pub fn new(
         msg_type: MessageType,
         from: String,
@@ -41,15 +44,18 @@ impl NetworkMessage {
         }
     }
 
+    #[allow(dead_code)]
     pub fn to_bytes(&self) -> Result<Vec<u8>, serde_json::Error> {
         serde_json::to_vec(self)
     }
 
+    #[allow(dead_code)]
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, serde_json::Error> {
         serde_json::from_slice(bytes)
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ClipboardData {
     pub id: String,
@@ -58,6 +64,7 @@ pub struct ClipboardData {
 }
 
 impl ClipboardData {
+    #[allow(dead_code)]
     pub fn new(content: String) -> Self {
         use std::time::{SystemTime, UNIX_EPOCH};
 

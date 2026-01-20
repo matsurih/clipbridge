@@ -6,10 +6,13 @@ use parking_lot::Mutex;
 use std::io::{Read, Write};
 use std::thread;
 
+#[allow(dead_code)]
 const P2P_PORT: u16 = 7879;
 
+#[allow(dead_code)]
 pub type MessageCallback = Arc<dyn Fn(NetworkMessage) + Send + Sync>;
 
+#[allow(dead_code)]
 pub struct P2PNetwork {
     device_id: String,
     connections: Arc<Mutex<HashMap<String, TcpStream>>>,
@@ -18,6 +21,7 @@ pub struct P2PNetwork {
 }
 
 impl P2PNetwork {
+    #[allow(dead_code)]
     pub fn new(device_id: String) -> Self {
         Self {
             device_id,
@@ -27,6 +31,7 @@ impl P2PNetwork {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_message_handler<F>(&mut self, callback: F)
     where
         F: Fn(NetworkMessage) + Send + Sync + 'static,
@@ -35,6 +40,7 @@ impl P2PNetwork {
     }
 
     /// Start the P2P network listener
+    #[allow(dead_code)]
     pub fn start(&self) -> std::io::Result<()> {
         let mut is_running = self.is_running.lock();
         if *is_running {
@@ -82,6 +88,7 @@ impl P2PNetwork {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn stop(&self) {
         let mut is_running = self.is_running.lock();
         *is_running = false;
@@ -92,6 +99,7 @@ impl P2PNetwork {
     }
 
     /// Connect to a peer device
+    #[allow(dead_code)]
     pub fn connect_to_peer(&self, addr: SocketAddr) -> std::io::Result<()> {
         log::info!("Connecting to peer at {}", addr);
 
@@ -123,6 +131,7 @@ impl P2PNetwork {
     }
 
     /// Broadcast clipboard data to all connected peers
+    #[allow(dead_code)]
     pub fn broadcast_clipboard(&self, content: String) -> std::io::Result<()> {
         let clipboard_data = ClipboardData::new(content);
         let message = NetworkMessage::new(
@@ -131,9 +140,7 @@ impl P2PNetwork {
             serde_json::to_value(&clipboard_data).unwrap(),
         );
 
-        let bytes = message.to_bytes().map_err(|e| {
-            std::io::Error::new(std::io::ErrorKind::Other, e)
-        })?;
+        let bytes = message.to_bytes().map_err(std::io::Error::other)?;
 
         let connections = self.connections.lock();
         for (peer_id, stream) in connections.iter() {

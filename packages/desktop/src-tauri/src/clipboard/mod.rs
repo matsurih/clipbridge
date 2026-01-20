@@ -13,7 +13,9 @@ mod linux;
 
 #[derive(Debug)]
 pub enum ClipboardError {
+    #[allow(dead_code)]
     AccessDenied,
+    #[allow(dead_code)]
     UnsupportedFormat,
     Unknown(String),
 }
@@ -58,7 +60,9 @@ pub fn set_text(text: &str) -> Result<()> {
 
 /// Clipboard monitor for detecting changes
 pub struct ClipboardMonitor {
+    #[allow(dead_code)]
     last_content: Arc<Mutex<String>>,
+    #[allow(dead_code)]
     is_running: Arc<Mutex<bool>>,
 }
 
@@ -71,6 +75,7 @@ impl ClipboardMonitor {
     }
 
     /// Start monitoring clipboard changes
+    #[allow(dead_code)]
     pub fn start<F>(&self, callback: F) -> Result<()>
     where
         F: Fn(String) + Send + 'static,
@@ -113,12 +118,14 @@ impl ClipboardMonitor {
     }
 
     /// Stop monitoring
+    #[allow(dead_code)]
     pub fn stop(&self) {
         let mut is_running = self.is_running.lock();
         *is_running = false;
     }
 
     /// Check if monitoring is active
+    #[allow(dead_code)]
     pub fn is_running(&self) -> bool {
         *self.is_running.lock()
     }
