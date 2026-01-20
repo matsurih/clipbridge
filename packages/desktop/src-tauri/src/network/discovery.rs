@@ -1,6 +1,6 @@
+use parking_lot::Mutex;
 use std::net::{SocketAddr, UdpSocket};
 use std::sync::Arc;
-use parking_lot::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -58,7 +58,11 @@ impl DeviceDiscovery {
         let is_running_clone = Arc::clone(&self.is_running);
         let device_id_clone = self.device_id.clone();
         thread::spawn(move || {
-            Self::listen_for_devices(&device_id_clone, &discovered_devices_clone, &is_running_clone);
+            Self::listen_for_devices(
+                &device_id_clone,
+                &discovered_devices_clone,
+                &is_running_clone,
+            );
         });
 
         log::info!("Device discovery started");
@@ -131,7 +135,9 @@ impl DeviceDiscovery {
             match socket.recv_from(&mut buf) {
                 Ok((len, addr)) => {
                     let message = String::from_utf8_lossy(&buf[..len]);
-                    if let Some(device_id) = message.strip_prefix(&format!("{}:", DISCOVERY_MESSAGE)) {
+                    if let Some(device_id) =
+                        message.strip_prefix(&format!("{}:", DISCOVERY_MESSAGE))
+                    {
                         let device_id = device_id.to_string();
 
                         // Ignore own broadcasts
@@ -147,7 +153,8 @@ impl DeviceDiscovery {
                             .unwrap()
                             .as_secs();
 
-                        if let Some(device) = devices.iter_mut().find(|d| d.device_id == device_id) {
+                        if let Some(device) = devices.iter_mut().find(|d| d.device_id == device_id)
+                        {
                             device.last_seen = now;
                             device.addr = addr;
                         } else {

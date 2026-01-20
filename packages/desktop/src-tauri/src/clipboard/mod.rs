@@ -1,7 +1,7 @@
+use parking_lot::Mutex;
 use std::error::Error;
 use std::fmt;
 use std::sync::Arc;
-use parking_lot::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -43,7 +43,9 @@ pub fn get_text() -> Result<String> {
     return linux::get_text();
 
     #[cfg(not(any(target_os = "windows", target_os = "linux")))]
-    Err(ClipboardError::Unknown("Platform not supported".to_string()))
+    Err(ClipboardError::Unknown(
+        "Platform not supported".to_string(),
+    ))
 }
 
 /// Set text to clipboard
@@ -55,7 +57,9 @@ pub fn set_text(text: &str) -> Result<()> {
     return linux::set_text(text);
 
     #[cfg(not(any(target_os = "windows", target_os = "linux")))]
-    Err(ClipboardError::Unknown("Platform not supported".to_string()))
+    Err(ClipboardError::Unknown(
+        "Platform not supported".to_string(),
+    ))
 }
 
 /// Clipboard monitor for detecting changes

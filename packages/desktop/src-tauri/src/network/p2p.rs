@@ -1,9 +1,9 @@
 use super::message::{ClipboardData, MessageType, NetworkMessage};
+use parking_lot::Mutex;
 use std::collections::HashMap;
+use std::io::{Read, Write};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::sync::Arc;
-use parking_lot::Mutex;
-use std::io::{Read, Write};
 use std::thread;
 
 #[allow(dead_code)]
@@ -69,7 +69,13 @@ impl P2PNetwork {
                         let on_message = on_message_clone.clone();
 
                         thread::spawn(move || {
-                            Self::handle_connection(stream, addr, connections, device_id, on_message);
+                            Self::handle_connection(
+                                stream,
+                                addr,
+                                connections,
+                                device_id,
+                                on_message,
+                            );
                         });
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
@@ -174,7 +180,8 @@ impl P2PNetwork {
                 Ok(_) => {
                     let len = u32::from_be_bytes(len_buf) as usize;
 
-                    if len > 10_000_000 { // 10MB max
+                    if len > 10_000_000 {
+                        // 10MB max
                         log::warn!("Message too large: {} bytes", len);
                         break;
                     }
@@ -184,13 +191,19 @@ impl P2PNetwork {
                         Ok(_) => {
                             match NetworkMessage::from_bytes(&buf) {
                                 Ok(msg) => {
-                                    log::debug!("Received message from {}: {:?}", addr, msg.msg_type);
+                                    log::debug!(
+                                        "Received message from {}: {:?}",
+                                        addr,
+                                        msg.msg_type
+                                    );
 
                                     // Handle device hello
                                     if matches!(msg.msg_type, MessageType::DeviceHello) {
                                         let peer_id = msg.from.clone();
                                         if let Ok(stream_clone) = stream.try_clone() {
-                                            connections.lock().insert(peer_id.clone(), stream_clone);
+                                            connections
+                                                .lock()
+                                                .insert(peer_id.clone(), stream_clone);
                                             log::info!("Added peer connection: {}", peer_id);
                                         }
                                     }

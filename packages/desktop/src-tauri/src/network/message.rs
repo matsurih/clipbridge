@@ -24,11 +24,7 @@ pub struct NetworkMessage {
 
 impl NetworkMessage {
     #[allow(dead_code)]
-    pub fn new(
-        msg_type: MessageType,
-        from: String,
-        payload: serde_json::Value,
-    ) -> Self {
+    pub fn new(msg_type: MessageType, from: String, payload: serde_json::Value) -> Self {
         use std::time::{SystemTime, UNIX_EPOCH};
 
         Self {
